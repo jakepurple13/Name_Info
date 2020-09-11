@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/enterName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/enterName"
+        app:endIconMode="clear_text"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toStartOf="@id/getInfoButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeActionLabel="Done"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/getInfoButton"
+        style="@style/Widget.App.Button.TextButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:icon="@drawable/ic_baseline_check_24"
+        app:layout_constraintBottom_toBottomOf="@id/enterName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/enterName"
+        app:layout_constraintTop_toTopOf="@id/enterName" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/chartLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/enterName">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
+                android:id="@+id/genderChart"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_margin="5dp"
+                app:direction="clockwise"
+                app:drawDot="true"
+                app:enableProgressAnimation="true"
+                app:gradientEndColor="@color/maleColor"
+                app:gradientType="radial"
+                app:progressCap="round" />
+
+            <TextView
+                android:id="@+id/genderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/genderChart"
+                android:layout_alignStart="@id/genderChart"
+                android:layout_alignEnd="@id/genderChart"
+                android:gravity="center"
+                android:text="@string/gender"
+                tools:text="@tools:sample/first_names" />
+
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/smallInfoLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/chartLayout"
+        app:layout_constraintEnd_toStartOf="@id/chartLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/enterName"
+        app:layout_constraintTop_toTopOf="@id/chartLayout">
+
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"
+            tools:visibility="visible" />
+
+        <RelativeLayout
+            android:id="@+id/infoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:id="@+id/nameInfo"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/app_name"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/ageInfo"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nameInfo"
+                android:layout_alignParentBottom="true"
+                android:text="@string/ageItem"
+                tools:text="@tools:sample/full_names" />
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/countryRv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/recentList"
+        app:layout_constraintTop_toBottomOf="@id/chartLayout"
+        app:spanCount="3"
+        tools:itemCount="6"
+        tools:listitem="@layout/country_item" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recentList"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/countryRv"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:itemCount="6"
+        tools:listitem="@layout/recent_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

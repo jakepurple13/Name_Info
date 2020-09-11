@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Name Info</string>
+    <string name="ageItem">Age: %d</string>
+    <string name="gender">Gender</string>
+    <string name="enterName">Enter Name:</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+</resources>
