@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
@@ -42,8 +43,10 @@ class MainActivity : AppCompatActivity() {
     private val recentAdapter by lazy { RecentAdapter(this, uiSubject) }
     private val dataStore = createDataStore(name = defaultSharedPrefName)
     private val cachedInfoList = dataStore.data
-        .map { it[preferencesKey<String>("cachedInfo")]?.fromJson<List<IfyInfo>>() }
+        .map { it.from<List<IfyInfo>>("cachedInfo") }
         .filterNotNull()
+
+    private inline fun <reified T> Preferences.from(key: String) = this[preferencesKey<String>(key)]?.fromJson<T>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         runBlocking { dataStore.data.first()[preferencesKey<String>("cachedInfo")]?.fromJson<List<IfyInfo>>()?.let { fixedCacheList.addAll(it) } }
 
-        cachedInfoList.collectOnUi {
-            recentAdapter.setListNotify(it)
-        }
+        cachedInfoList.collectOnUi { recentAdapter.setListNotify(it) }
 
         genderChart.setProgressTextAdapter { "${it.roundToInt()}%" }
 
