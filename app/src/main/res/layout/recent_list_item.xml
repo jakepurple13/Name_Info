@@ -75,7 +75,7 @@
                     android:layout_alignStart="@id/recentGenderChart"
                     android:layout_alignEnd="@id/recentGenderChart"
                     android:gravity="center"
-                    android:text="@{info.gender.gender}"
+                    android:text="@{info.gender.capitalGender()}"
                     tools:text="@tools:sample/first_names" />
 
             </RelativeLayout>

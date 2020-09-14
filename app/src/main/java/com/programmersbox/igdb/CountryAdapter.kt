@@ -40,9 +40,9 @@ class CountryHolder(private val binding: CountryItemBinding) : RecyclerView.View
                 resourceReady { image, _ ->
                     binding.countryName.startDrawable = image
                     image.getPalette().let {
-                        it.dominantSwatch?.rgb?.let { it1 -> binding.countryChart.setGradient(CircularProgressIndicator.RADIAL_GRADIENT, it1) }
+                        it.dominantSwatch?.rgb?.let { it1 -> binding.countryChart.setGradient(CircularProgressIndicator.LINEAR_GRADIENT, it1) }
                         it.mutedSwatch?.rgb?.let { it1 -> binding.countryChart.progressColor = it1 }
-                        it.vibrantSwatch?.rgb?.let { it1 -> binding.countryChart.textColor = it1 }
+                        //it.vibrantSwatch?.titleTextColor?.let { it1 -> binding.countryChart.textColor = it1 }
                         it.dominantSwatch?.rgb?.let { it1 -> binding.countryChart.dotColor = it1 }
                     }
                 }

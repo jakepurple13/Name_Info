@@ -50,6 +50,8 @@ data class Gender(val gender: String, val probability: Float) {
             "female" -> R.color.maleColor
             else -> null
         }
+
+    fun capitalGender() = gender.capitalize(Locale.getDefault())
 }
 
 data class IfyInfo(val name: String, val age: Int, val gender: Gender?, val nationality: List<Country>)

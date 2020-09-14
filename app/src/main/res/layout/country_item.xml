@@ -30,6 +30,7 @@
                 android:layout_margin="5dp"
                 app:direction="clockwise"
                 app:progressCap="round"
+                app:textColor="?android:textColorPrimary"
                 app:enableProgressAnimation="true"
                 app:drawDot="true"
                 app:gradientType="radial"

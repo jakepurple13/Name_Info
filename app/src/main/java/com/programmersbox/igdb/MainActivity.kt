@@ -4,11 +4,16 @@ import android.Manifest
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.createDataStore
+import androidx.datastore.preferences.edit
+import androidx.datastore.preferences.preferencesKey
 import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActionEvents
-import com.programmersbox.gsonutils.sharedPrefNotNullObjectDelegate
+import com.programmersbox.flowutils.collectOnUi
+import com.programmersbox.gsonutils.fromJson
+import com.programmersbox.gsonutils.toJson
 import com.programmersbox.helpfulutils.*
 import com.programmersbox.igdb.models.Ify
 import com.programmersbox.igdb.models.IfyInfo
@@ -18,6 +23,12 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -27,13 +38,22 @@ class MainActivity : AppCompatActivity() {
     private val ifyService by lazy { Ify() }
     private val adapter by lazy { CountryAdapter(this) }
     private val uiSubject = PublishSubject.create<IfyInfo>()
-    private var cachedInfo by sharedPrefNotNullObjectDelegate(mutableListOf<IfyInfo>())
-    private val fixedCacheList by lazy { FixedList(10, c = cachedInfo) }
+    private val fixedCacheList by lazy { FixedList<IfyInfo>(10) }
     private val recentAdapter by lazy { RecentAdapter(this, uiSubject) }
+    private val dataStore = createDataStore(name = defaultSharedPrefName)
+    private val cachedInfoList = dataStore.data
+        .map { it[preferencesKey<String>("cachedInfo")]?.fromJson<List<IfyInfo>>() }
+        .filterNotNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        runBlocking { dataStore.data.first()[preferencesKey<String>("cachedInfo")]?.fromJson<List<IfyInfo>>()?.let { fixedCacheList.addAll(it) } }
+
+        cachedInfoList.collectOnUi {
+            recentAdapter.setListNotify(it)
+        }
 
         genderChart.setProgressTextAdapter { "${it.roundToInt()}%" }
 
@@ -52,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         getInfoButton
             .clicks()
             .map { enterName.editText?.text?.toString() }
+            .map { it.capitalize(Locale.getDefault()) }
             .distinctUntilChanged()
             .subscribe { name ->
                 enterName.editText?.hideKeyboard()
@@ -84,11 +105,15 @@ class MainActivity : AppCompatActivity() {
 
         uiSubject
             .subscribe {
-                recentAdapter.addItem(it)
-                if (it !in fixedCacheList) {
-                    fixedCacheList.add(0, it)
-                    cachedInfo = fixedCacheList.distinctBy(IfyInfo::name).toMutableList()
+                if (it !in fixedCacheList) fixedCacheList.add(0, it)
+                GlobalScope.launch {
+                    dataStore.edit { e -> e[preferencesKey<String>("cachedInfo")] = fixedCacheList.distinctBy(IfyInfo::name).toJson() }
                 }
+            }
+            .addTo(disposable)
+
+        uiSubject
+            .subscribe {
                 infoLayout.visible()
                 loading.gone()
                 it.gender?.let { gender ->

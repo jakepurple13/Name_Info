@@ -13,9 +13,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/enterName"
+        app:boxStrokeColor="?android:textColorPrimary"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
+        app:hintTextColor="?android:textColorPrimary"
         app:layout_constraintEnd_toStartOf="@id/getInfoButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,7 +28,8 @@
             android:imeActionLabel="Done"
             android:imeOptions="actionDone"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:textCursorDrawable="@drawable/cursor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -36,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         app:icon="@drawable/ic_baseline_check_24"
+        app:iconTint="?android:textColorPrimary"
         app:layout_constraintBottom_toBottomOf="@id/enterName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/enterName"
@@ -95,9 +99,9 @@
             android:id="@+id/loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:indeterminate="true"
             android:indeterminateBehavior="repeat"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <RelativeLayout
@@ -132,24 +136,26 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/countryRv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/recentList"
+        app:layout_constraintHeight_max="0dp"
+        app:layout_constraintHeight_min="wrap"
         app:layout_constraintTop_toBottomOf="@id/chartLayout"
         app:spanCount="3"
-        tools:itemCount="6"
+        tools:itemCount="3"
         tools:listitem="@layout/country_item" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recentList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/countryRv"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         tools:itemCount="6"
-        tools:listitem="@layout/recent_list_item"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        tools:listitem="@layout/recent_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
