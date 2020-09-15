@@ -9,52 +9,52 @@
         <variable
             name="info"
             type="com.programmersbox.igdb.models.IfyInfo" />
-        
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_margin="5dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_margin="5dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
 
             <RelativeLayout
                 android:id="@+id/recentInfoLayout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:id="@+id/recentName"
-                    android:text="@{info.name}"
-                    tools:text="@tools:sample/first_names"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@{info.name}"
+                    tools:text="@tools:sample/first_names" />
 
                 <TextView
                     android:id="@+id/recentAge"
                     style="@style/TextAppearance.MaterialComponents.Body1"
-                    android:layout_below="@id/recentName"
                     android:layout_width="wrap_content"
-                    android:text="@string/ageItem"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/recentName"
+                    android:text="@string/ageItem" />
 
             </RelativeLayout>
 
             <RelativeLayout
-                app:layout_constraintStart_toEndOf="@id/recentInfoLayout"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/recentChartLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp">
+                android:layout_margin="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/recentInfoLayout"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
                     android:id="@+id/recentGenderChart"
@@ -80,6 +80,17 @@
 
             </RelativeLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                nationalities="@{info.nationality}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="@id/recentChartLayout"
+                app:layout_constraintEnd_toStartOf="@id/recentChartLayout"
+                app:layout_constraintStart_toStartOf="@id/recentInfoLayout"
+                app:layout_constraintTop_toBottomOf="@id/recentInfoLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

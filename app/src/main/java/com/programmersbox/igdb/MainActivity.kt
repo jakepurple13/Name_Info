@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private val ifyService by lazy { Ify() }
     private val adapter by lazy { CountryAdapter(this) }
     private val uiSubject = PublishSubject.create<IfyInfo>()
-    private val fixedCacheList by lazy { FixedList<IfyInfo>(10) }
+    private val fixedCacheList = FixedList<IfyInfo>(10)
     private val recentAdapter by lazy { RecentAdapter(this, uiSubject) }
     private val dataStore = createDataStore(name = defaultSharedPrefName)
     private val cachedInfoList = dataStore.data
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                         name?.let { it1 ->
                             infoLayout.invisible()
                             loading.visible()
-                            fixedCacheList.find { info -> info.name == name }
+                            fixedCacheList.find { info -> info.name == it1 }
                                 ?.let(uiSubject::onNext) ?: ifyService
                                 .getIfyInfo(it1)
                                 .subscribeOn(Schedulers.io())
@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity() {
             .subscribe {
                 nameInfo.text = it.name
                 ageInfo.text = getString(R.string.ageItem, it.age)
+                relatedNames.text = getString(R.string.relatedNames, it.relatedNames?.joinToString(", ") ?: "")
             }
             .addTo(disposable)
 

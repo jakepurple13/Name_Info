@@ -1,11 +1,7 @@
 package com.programmersbox.igdb
 
-import com.programmersbox.helpfulutils.FixedListLocation
-import com.programmersbox.helpfulutils.fixedListOf
 import com.programmersbox.igdb.models.BehindTheName
-import com.programmersbox.igdb.models.Ify
 import org.junit.Test
-import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -33,14 +29,14 @@ class ExampleUnitTest {
 
         println(Locale.getAvailableLocales().sortedBy { it.displayCountry }.map { "${it.displayCountry} - ${it.country}" })*/
 
-        //BehindTheName.buildService("Jacob").subscribe { println(it) }
+        BehindTheName.buildService().getNameFacts("Jacob").subscribe { println(it) }
 
-        val f: MutableList<Int> = fixedListOf(5, 1, 2, 3, 4, 5).apply { removeFrom = FixedListLocation.START }
+        /*val f: MutableList<Int> = fixedListOf(5, 1, 2, 3, 4, 5).apply { removeFrom = FixedListLocation.START }
 
         for(i in 0..10) {
             f+=i
             println(f)
-        }
+        }*/
 
 
     }

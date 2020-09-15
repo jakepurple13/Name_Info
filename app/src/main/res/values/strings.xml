@@ -6,4 +6,7 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="error">Something went wrong. Please connect to wifi or wait until tomorrow</string>
+    <string name="genderCount">Gender Count: %d</string>
+    <string name="ageCount">Age Count: %d</string>
+    <string name="relatedNames">Related Names: %s</string>
 </resources>

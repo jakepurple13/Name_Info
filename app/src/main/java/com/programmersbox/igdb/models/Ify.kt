@@ -1,13 +1,13 @@
 package com.programmersbox.igdb.models
 
 import androidx.lifecycle.ViewModel
+import com.programmersbox.igdb.BuildConfig
 import com.programmersbox.igdb.R
 import com.programmersbox.thirdpartyutils.gsonConverter
 import com.programmersbox.thirdpartyutils.rx2FactorySync
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import okhttp3.OkHttpClient
-import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
@@ -18,16 +18,19 @@ class Ify {
     private val agify by lazy { Agify.buildService() }
     private val genderize by lazy { Genderize.buildService() }
     private val nationalize by lazy { Nationalize.buildService() }
+    private val behindTheName by lazy { BehindTheName.buildService() }
 
     fun getIfyInfo(vararg name: String) = Observables.zip(
         agify.getList(*name),
         genderize.getList(*name),
-        nationalize.getList(*name)
-    ) { a, g, n ->
+        nationalize.getList(*name),
+        behindTheName.getNameFacts(name[0])
+    ) { a, g, n, b ->
         a.map { age ->
             IfyInfo(
                 name = age.name,
                 age = age.age,
+                relatedNames = b.names,
                 gender = g.find { it.name == age.name }?.let { Gender(gender = it.gender, probability = it.probability) },
                 nationality = n.find { it.name == age.name }?.country.orEmpty()
             )
@@ -54,7 +57,7 @@ data class Gender(val gender: String, val probability: Float) {
     fun capitalGender() = gender.capitalize(Locale.getDefault())
 }
 
-data class IfyInfo(val name: String, val age: Int, val gender: Gender?, val nationality: List<Country>)
+data class IfyInfo(val name: String, val age: Int, val relatedNames: List<String>?, val gender: Gender?, val nationality: List<Country>)
 
 data class AgifyInfo(val name: String, val age: Int, val count: Int)
 
@@ -66,6 +69,8 @@ data class Country(val country_id: String, val probability: Float) : ViewModel()
 }
 
 data class NationalizeInfo(val name: String, val country: List<Country>)
+
+data class BehindTheNameInfo(val names: List<String> = emptyList())
 
 object Agify {
     private const val baseUrl = "https://api.agify.io"
@@ -158,7 +163,7 @@ object Nationalize {
 }
 
 object BehindTheName {
-    private const val baseUrl = "https://www.behindthename.com/name/"
+    private const val baseUrl = "https://www.behindthename.com/"
     // https://www.behindthename.com/api/lookup.json?name=mary&key=#key#
 
     private val client = OkHttpClient.Builder()
@@ -169,19 +174,16 @@ object BehindTheName {
         }
         .build()
 
-    fun buildService(name: String) = Observable.create<String> {
-        it.onNext(Jsoup.connect("$baseUrl$name").get().select("section:has(.namemain)").text())
-    }
-
-    /*class BehindTheNameInfo(
-        @JsoupText(".namemain")
-        val meaning: String
-    )
+    fun buildService(): BehindTheNameService = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(client)
+        .gsonConverter()
+        .rx2FactorySync()
+        .build()
+        .create()
 
     interface BehindTheNameService {
-
-        @Select("div")
-        fun getNameFacts(*//*@Query("name") name: String, @Query("key") key: String = BuildConfig.BehindTheNameKey*//*): Observable<BehindTheNameInfo>
-
-    }*/
+        @GET("api/related.json?")
+        fun getNameFacts(@Query("name") name: String, @Query("key") key: String = BuildConfig.BehindTheNameKey): Observable<BehindTheNameInfo>
+    }
 }

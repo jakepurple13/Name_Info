@@ -19,8 +19,8 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
             android:layout_toStartOf="@id/getInfoButton"
             android:hint="@string/enterName"
             app:boxStrokeColor="?android:textColorPrimary"
@@ -135,9 +135,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/nameInfo"
-                android:layout_alignParentBottom="true"
                 android:text="@string/ageItem"
-                tools:text="@tools:sample/full_names" />
+                tools:text="Age: 52" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ageInfo"
+                android:layout_alignParentBottom="true">
+
+                <TextView
+                    android:id="@+id/relatedNames"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/relatedNames"
+                    tools:text="@tools:sample/first_names" />
+
+            </ScrollView>
 
         </RelativeLayout>
 
