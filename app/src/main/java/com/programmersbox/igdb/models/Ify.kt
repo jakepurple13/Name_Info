@@ -164,7 +164,6 @@ object Nationalize {
 
 object BehindTheName {
     private const val baseUrl = "https://www.behindthename.com/"
-    // https://www.behindthename.com/api/lookup.json?name=mary&key=#key#
 
     private val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
@@ -183,7 +182,7 @@ object BehindTheName {
         .create()
 
     interface BehindTheNameService {
-        @GET("api/related.json?")
-        fun getNameFacts(@Query("name") name: String, @Query("key") key: String = BuildConfig.BehindTheNameKey): Observable<BehindTheNameInfo>
+        @GET("api/related.json?key=${BuildConfig.BehindTheNameKey}")
+        fun getNameFacts(@Query("name") name: String): Observable<BehindTheNameInfo>
     }
 }
