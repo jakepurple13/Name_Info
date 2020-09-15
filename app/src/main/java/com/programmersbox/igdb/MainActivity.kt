@@ -8,7 +8,6 @@ import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
-import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActionEvents
@@ -43,18 +42,20 @@ class MainActivity : AppCompatActivity() {
     private val recentAdapter by lazy { RecentAdapter(this, uiSubject) }
     private val dataStore = createDataStore(name = defaultSharedPrefName)
     private val cachedInfoList = dataStore.data
-        .map { it.from<List<IfyInfo>>("cachedInfo") }
+        .map { it.preferencesObject<List<IfyInfo>>("cachedInfo") }
         .filterNotNull()
 
-    private inline fun <reified T> Preferences.from(key: String) = this[preferencesKey<String>(key)]?.fromJson<T>()
+    private inline fun <reified T> Preferences.preferencesObject(key: String) = this[preferencesKey<String>(key)]?.fromJson<T>()
+    /*private inline fun <reified T> MutablePreferences.preferencesObject(key: String, value: T) =
+        let { this[preferencesKey<String>(key)] = value.toJson() }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        runBlocking { dataStore.data.first()[preferencesKey<String>("cachedInfo")]?.fromJson<List<IfyInfo>>()?.let { fixedCacheList.addAll(it) } }
+        runBlocking { dataStore.data.first().preferencesObject<List<IfyInfo>>("cachedInfo")?.let { fixedCacheList.addAll(it) } }
 
-        cachedInfoList.collectOnUi { recentAdapter.setListNotify(it) }
+        cachedInfoList.collectOnUi(action = recentAdapter::setListNotify)
 
         genderChart.setProgressTextAdapter { "${it.roundToInt()}%" }
 
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                                     t.printStackTrace()
                                     Snackbar.make(
                                         recentList,
-                                        "Something went wrong. Please connect to wifi or wait until tomorrow",
+                                        R.string.error,
                                         Snackbar.LENGTH_SHORT
                                     ).show()
                                 }
@@ -117,28 +118,41 @@ class MainActivity : AppCompatActivity() {
             .subscribe {
                 infoLayout.visible()
                 loading.gone()
+            }
+            .addTo(disposable)
+
+        uiSubject
+            .map(IfyInfo::nationality)
+            .subscribe(adapter::setListNotify)
+            .addTo(disposable)
+
+        uiSubject
+            .subscribe {
+                nameInfo.text = it.name
+                ageInfo.text = getString(R.string.ageItem, it.age)
+            }
+            .addTo(disposable)
+
+        uiSubject
+            .subscribe {
                 it.gender?.let { gender ->
                     genderName.text = gender.gender.capitalize(Locale.getDefault())
                     genderChart.setCurrentProgress(gender.probability.toDouble() * 100)
                     gender.genderColor
                         ?.let(this::getColor)
                         ?.let { it1 ->
-                            genderChart.setGradient(CircularProgressIndicator.RADIAL_GRADIENT, it1)
+                            genderChart.progressColor = it1
                             genderChart.textColor = it1
                         }
 
                     gender.genderColorInverse
                         ?.let(this::getColor)
-                        ?.let { it1 -> genderChart.dotColor = it1 }
+                        ?.let(genderChart::setDotColor)
                 }
-
-                nameInfo.text = it.name.capitalize(Locale.getDefault())
-                ageInfo.text = getString(R.string.ageItem, it.age)
-
-                adapter.setListNotify(it.nationality)
-
             }
             .addTo(disposable)
+
+        fixedCacheList.firstOrNull()?.let(uiSubject::onNext)
 
     }
 

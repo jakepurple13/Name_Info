@@ -3,10 +3,7 @@ package com.programmersbox.igdb
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import antonkozyriatskyi.circularprogressindicator.CircularProgressIndicator
 import com.bumptech.glide.Glide
 import com.programmersbox.dragswipe.DragSwipeAdapter
 import com.programmersbox.helpfulutils.layoutInflater
@@ -30,9 +27,7 @@ class CountryHolder(private val binding: CountryItemBinding) : RecyclerView.View
         binding.countryChart.setCurrentProgress(item.probability.toDouble() * 100)
         binding.country = item
         binding.executePendingBindings()
-
         binding.countryChart.setProgressTextAdapter { "${it.roundToInt()}%" }
-
         Glide.with(binding.countryName)
             .asDrawable()
             .load(item.flagUrl)
@@ -40,9 +35,7 @@ class CountryHolder(private val binding: CountryItemBinding) : RecyclerView.View
                 resourceReady { image, _ ->
                     binding.countryName.startDrawable = image
                     image.getPalette().let {
-                        it.dominantSwatch?.rgb?.let { it1 -> binding.countryChart.setGradient(CircularProgressIndicator.LINEAR_GRADIENT, it1) }
-                        it.mutedSwatch?.rgb?.let { it1 -> binding.countryChart.progressColor = it1 }
-                        //it.vibrantSwatch?.titleTextColor?.let { it1 -> binding.countryChart.textColor = it1 }
+                        it.vibrantSwatch?.rgb?.let { it1 -> binding.countryChart.progressColor = it1 }
                         it.dominantSwatch?.rgb?.let { it1 -> binding.countryChart.dotColor = it1 }
                     }
                 }
