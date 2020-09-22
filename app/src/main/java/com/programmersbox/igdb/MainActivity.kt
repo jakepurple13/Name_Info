@@ -19,6 +19,7 @@ import com.programmersbox.igdb.models.Ify
 import com.programmersbox.igdb.models.IfyInfo
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        RxJavaPlugins.setErrorHandler { it.printStackTrace() }
 
         runBlocking { dataStore.data.first().preferencesObject<List<IfyInfo>>("cachedInfo")?.let { fixedCacheList.addAll(it) } }
 
@@ -89,12 +92,17 @@ class MainActivity : AppCompatActivity() {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnError { t ->
+                                    infoLayout.visible()
+                                    loading.invisible()
                                     t.printStackTrace()
                                     Snackbar.make(
                                         recentList,
                                         R.string.error,
                                         Snackbar.LENGTH_SHORT
-                                    ).show()
+                                    )
+                                        .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                                        .setAction(R.string.dismiss) {}
+                                        .show()
                                 }
                                 .map(List<IfyInfo>::first)
                                 .subscribe(uiSubject::onNext)

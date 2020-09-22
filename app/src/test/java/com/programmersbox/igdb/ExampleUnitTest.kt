@@ -1,5 +1,6 @@
 package com.programmersbox.igdb
 
+import android.text.SpannableStringBuilder
 import com.programmersbox.igdb.models.BehindTheName
 import org.junit.Test
 
@@ -38,6 +39,7 @@ class ExampleUnitTest {
             println(f)
         }*/
 
+        SpannableStringBuilder("").toString()
 
     }
 }

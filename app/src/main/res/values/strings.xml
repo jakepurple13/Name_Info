@@ -9,4 +9,5 @@
     <string name="genderCount">Gender Count: %d</string>
     <string name="ageCount">Age Count: %d</string>
     <string name="relatedNames">Related Names: %s</string>
+    <string name="dismiss">Dismiss</string>
 </resources>
